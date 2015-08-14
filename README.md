@@ -89,7 +89,8 @@ Directives can take a couple of other forms too:
 With the appropriate directive setup in your `CupcakeController`, both of its child `div`s above should render the same content.
 
 Let's create a directive and really Angularify this page!
-`application.js`
+`web/js/application.js`
 ```
-
+(function () {
+}).load(this);
 ```
