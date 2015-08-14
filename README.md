@@ -38,7 +38,7 @@ We're going to continue working with the Cupcakes app from [my previous tutorial
 
 Before we can continue, we need to make sure Angular is a part of the assets that composer is pulling in.
 
-(wiki link)
+[Angular installation walkthrough](https://github.com/vybeauregard/Yii2-angular/wiki/Install-Angular-into-a-Yii2-project)
 
 We'll use Yii's routing to access our Angular page, and we want it to be accessible via `http://localhost/cupcakes`. Let's add an action to our `CupcakesController` now.
 
@@ -87,3 +87,9 @@ Directives can take a couple of other forms too:
 **Class** directives allow you to bind data to a container based off its class name. Handy if you need css styles to match the container's contents 100% of the time!
 
 With the appropriate directive setup in your `CupcakeController`, both of its child `div`s above should render the same content.
+
+Let's create a directive and really Angularify this page!
+`application.js`
+```
+
+```
