@@ -38,47 +38,7 @@ We're going to continue working with the Cupcakes app from [my previous tutorial
 
 Before we can continue, we need to make sure Angular is a part of the assets that composer is pulling in.
 
-In `composer.json`:
-```
-"require": {
-    . . . 
-    "bower-asset/angular": "*"
-    . . . 
-}
-```
-*Make sure there are no trailing commas in this JSON file, otherwise it won't execute.
-
-Now run `composer update` again.
-
-Next, we need to tell Yii to load Angular as part of the site's assets (e.g. jQuery, bootstrap).
-`assets/BowerAsset.php`
-```
-namespace app\assets;
-use yii\web\AssetBundle;
-
-class BowerAsset extends AssetBundle
-{
-    public $sourcePath = '@bower/';
-    public $js = [
-        'angular/angular.min.js',
-    ];
-    public $css = [
-    ];
-    public $depends = [
-    //    'app\assets\AppAsset'
-    ];
-}
-```
-Finally, in order to tell Yii to load this new `BowerAsset` class, let's add it to the dependencies in `AppAsset`.
-`assets/AppAsset.php`
-```
-public $depends = [
-  . . .
-  'app\assets\BowerAsset',
-  . . .
-];
-
-```
+(wiki link)
 
 We'll use Yii's routing to access our Angular page, and we want it to be accessible via `http://localhost/cupcakes`. Let's add an action to our `CupcakesController` now.
 
