@@ -77,11 +77,33 @@
 
 <p>I was about to. Increase your calm.</p>
 
+<p>We're going to continue working with the Cupcakes app from <a href="http://vybeauregard.github.io/Yii2-Cupcakes/">my previous tutorial</a>. If you've been following along, you can pick right up where we left off. If not, clone <a href="https://github.com/vybeauregard/Yii2-Cupcakes.git">this repo</a>, checkout <code>working-branch</code>, then run <code>composer update</code> and <code>./yii migrate</code> to bring yourself up to speed.</p>
+
+<p>Before we can continue, we need to make sure Angular is a part of the assets that composer is pulling in.</p>
+
+<p><a href="https://github.com/vybeauregard/Yii2-angular/wiki/Install-Angular-into-a-Yii2-project">Angular installation walkthrough</a></p>
+
+<p>We'll use Yii's routing to access our Angular page, and we want it to be accessible via <code>http://localhost/cupcakes</code>. Let's add an action to our <code>CupcakesController</code> now.</p>
+
+<p><code>controllers/CupcakesController.php</code></p>
+
+<pre><code>. . .
+public function actionIndex()
+{
+  return $this-&gt;render('index');
+}
+. . .
+</code></pre>
+
+<p>This will ensure that our <code>index.php</code> page will load when we request <code>http://localhost/cupcakes</code>. Let's create that page now.</p>
+
+<p><code>views/cupcakes/index.php</code></p>
+
 <pre><code>&lt;html&gt;
   &lt;body ng-app="cupcakes" ng-controller="CupcakeController"&gt;
     . . .
   &lt;/body&gt;
-&lt;/html
+&lt;/html&gt;
 </code></pre>
 
 <h4>
@@ -112,6 +134,13 @@
 <p><strong>Class</strong> directives allow you to bind data to a container based off its class name. Handy if you need css styles to match the container's contents 100% of the time!</p>
 
 <p>With the appropriate directive setup in your <code>CupcakeController</code>, both of its child <code>div</code>s above should render the same content.</p>
+
+<p>Let's create a directive and really Angularify this page!
+<code>web/js/application.js</code></p>
+
+<pre><code>(function () {
+}).load(this);
+</code></pre>
       </section>
     </div>
 
