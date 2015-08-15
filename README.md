@@ -43,7 +43,7 @@ Before we can continue, we need to make sure Angular is a part of the assets tha
 We'll use Yii's routing to access our Angular page, and we want it to be accessible via `http://localhost/cupcakes`. Let's add an action to our `CupcakesController` now.
 
 `controllers/CupcakesController.php`
-```
+```php
 . . .
 public function actionIndex()
 {
@@ -54,19 +54,19 @@ public function actionIndex()
 This will ensure that our `index.php` page will load when we request `http://localhost/cupcakes`. Let's create that page now.
 
 `views/cupcakes/index.php`
-```
+```html
 <html>
   <body ng-app="cupcakes" ng-controller="CupcakeController">
     . . .
   </body>
 </html>
 ```
-####`ng-app` ain't no attribute I ever heard of. What kind of witch doctor are you?
+####Hey! `ng-app` ain't no attribute I ever heard of. What kind of witch doctor are you?
 
 Here's where Angular gets invoked. Any attribute in an html page that starts with `ng-` is called a directive. As the browser renders the page, Angular takes any `ng-` attribute and evaluates it as necessary. This keeps your html looking like html while allowing for dynamic data manipulation at the same time.
 
 Directives can take a couple of other forms too:
-```
+```html
 <html>
   <body ng-app="cupcakes" ng-controller="CupcakeController">
     <div id="element-directives">
@@ -90,7 +90,7 @@ With the appropriate directive setup in your `CupcakeController`, both of its ch
 
 Let's create a directive and really Angularify this page!
 `web/js/application.js`
-```
+```js
 (function () {
 }).load(this);
 ```
