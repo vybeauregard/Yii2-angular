@@ -253,14 +253,14 @@ angular.module('CupcakeApp.directives', [])
 Now that we have all of these extra JS files, we need to tell Yii to load them when the app is requested.
 
 `assets/AppAsset.php`
-```
+```php
 . . .
-    public $js = [
-        'js/application.js',
-        'js/controllers.js',
-        'js/directives.js',
-        'js/services.js',
-    ];
+public $js = [
+  'js/application.js',
+  'js/controllers.js',
+  'js/directives.js',
+  'js/services.js',
+];
 . . .
 ```
 Now refresh your app and you should see Angular work its magic.
