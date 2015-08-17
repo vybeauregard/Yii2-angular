@@ -40,6 +40,7 @@ Before we can continue, we need to make sure Angular is a part of the assets tha
 We'll use Yii's routing to access our Angular page, and we want it to be accessible via `http://localhost/cupcakes`. Let's add an action to our `CupcakesController` now.
 
 `controllers/CupcakesController.php`
+
 ```php
 . . .
 public function actionIndex()
@@ -51,7 +52,9 @@ public function actionIndex()
 This will ensure that our `index.php` page will load when we request `http://localhost/cupcakes`. We'll create that page in a second. 
 
 Next, we need a way to expose our cupcakes data in a format Angular can interpret. Yii happens to have a JSON formatter that works well in just such a situation.
+
 `controllers/CupcakesApiController.php`
+
 ```php
 <?php
 namespace app\controllers;
@@ -80,6 +83,7 @@ class CupcakesApiController extends CupcakesController
 Now let's create `index.php` so our Yii controller can render the view when we ask it to.
 
 `views/cupcakes/index.php`
+
 ```html
 <html>
   <body ng-app="cupcakes" ng-controller="CupcakeController">
@@ -92,6 +96,9 @@ Now let's create `index.php` so our Yii controller can render the view when we a
 Here's where Angular gets invoked. Any attribute in an html page that starts with `ng-` is called a directive. As the browser renders the page, Angular takes any `ng-` attribute and evaluates it as necessary. This keeps your html looking like html while allowing for dynamic data manipulation at the same time.
 
 You can even create your own app-specific directives:
+
+`views/cupcakes/index.php`
+
 ```html
 <html>
   <body ng-app="CupcakeApp" ng-controller="cupcakesController">
@@ -134,6 +141,7 @@ In this example, we're using **class** directives. You can also create directive
 Let's create these directives in our app and really Angularify this page!
 
 In `application.js`, we will instantiate the module and inject its dependencies in the brackets.
+
 `web/js/application.js`
 ```js
 angular.module('CupcakeApp', [
@@ -144,6 +152,7 @@ angular.module('CupcakeApp', [
 ```
 Now, we will create the dependencies:
 `cupcakesController` tells the app how to obtain a cupcake object:
+
 `web/js/controllers.js`
 ```js
 angular.module('CupcakeApp.controllers', [])
@@ -156,7 +165,8 @@ angular.module('CupcakeApp.controllers', [])
 });
 ```
 Next, our `cupcakeAPIservice` will tell the app where the cupcake data is stored. In this case, it's exposed by our `cupcakes-api`.
-`js/services.js`
+
+`web/js/services.js`
 ```js
 angular.module('CupcakeApp.services', [])
     .factory('cupcakeAPIservice', function($http) {
