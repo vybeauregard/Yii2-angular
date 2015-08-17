@@ -183,3 +183,84 @@ angular.module('CupcakeApp.services', [])
     return cupcakeAPI;
 });
 ```
+The last dependency we have to create contains our `directives`. Here is where Angular takes our custom class names and replaces its contents with attributes from our cupcake model using templates we define:
+
+`web/js/directives.js`
+```js
+angular.module('CupcakeApp.directives', [])
+    .directive('cupcakeId', function() {
+        return {
+            restrict: 'CE',
+            replace: 'true',
+            template: '<td>{{cupcake.id}}</td>'
+        }
+    }).directive('cupcakeName', function() {
+        return {
+            restrict: 'CE',
+            replace: 'true',
+            template: '<td>{{cupcake.name}}</td>'
+        }
+    }).directive('cupcakeDescription', function() {
+        return {
+            restrict: 'CE',
+            replace: 'true',
+            template: '<td>{{cupcake.description}}</td>'
+        }
+    }).directive('cupcakeCakeFlavor1', function() {
+        return {
+            restrict: 'CE',
+            replace: 'true',
+            template: '<td>{{cupcake.cake_flavor_1}}</td>'
+        }
+    }).directive('cupcakeCakeFlavor2', function() {
+        return {
+            restrict: 'CE',
+            replace: 'true',
+            template: '<td>{{cupcake.cake_flavor_2}}</td>'
+        }
+    }).directive('cupcakeCakeColor', function() {
+        return {
+            restrict: 'CE',
+            replace: 'true',
+            template: '<td>{{cupcake.cake_color}}</td>'
+        }
+    }).directive('cupcakeIcingFlavor', function() {
+        return {
+            restrict: 'CE',
+            replace: 'true',
+            template: '<td>{{cupcake.icing_flavor}}</td>'
+        }
+    }).directive('cupcakeIcingColor', function() {
+        return {
+            restrict: 'CE',
+            replace: 'true',
+            template: '<td>{{cupcake.icing_color}}</td>'
+        }
+    }).directive('cupcakeFondant', function() {
+        return {
+            restrict: 'CE',
+            replace: 'true',
+            template: '<td>{{cupcake.fondant}}</td>'
+        }
+    }).directive('cupcakeCalories', function() {
+        return {
+            restrict: 'CE',
+            replace: 'true',
+            template: '<td>{{cupcake.calories}}</td>'
+        }
+    });
+```
+Now that we have all of these extra JS files, we need to tell Yii to load them when the app is requested.
+
+`assets/AppAsset.php`
+```
+. . .
+    public $js = [
+        'js/application.js',
+        'js/controllers.js',
+        'js/directives.js',
+        'js/services.js',
+    ];
+. . .
+```
+Now refresh your app and you should see Angular work its magic.
