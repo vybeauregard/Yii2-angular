@@ -183,6 +183,9 @@ angular.module('CupcakeApp.services', [])
     return cupcakeAPI;
 });
 ```
+
+Since Yii already has a `cupcake` model defined, the JSON object it returns will pass everything along to Angular without the need to redefine the same object there too.
+
 The last dependency we have to create contains our `directives`. Here is where Angular takes our custom class names and replaces its contents with attributes from our cupcake model using templates we define:
 
 `web/js/directives.js`
@@ -250,6 +253,8 @@ angular.module('CupcakeApp.directives', [])
         }
     });
 ```
+You'll notice in the template definition of each of these directives we use double curly brace notation. This tells angular we want to access a property of our `cupcake` object, as defined by our controller.
+
 Now that we have all of these extra JS files, we need to tell Yii to load them when the app is requested.
 
 `assets/AppAsset.php`
@@ -264,3 +269,64 @@ public $js = [
 . . .
 ```
 Now refresh your app and you should see Angular work its magic.
+
+####That was an awful lot of work for a static table. Yii already gave us that out of the box.
+
+You're right. If we're just spitting out data and not exposing any updating capability to the user, this isn't a good solution. But let's say our cupcake baker wants to batch update her entire inventory of cupcakes without a bunch of back and forth jiggery-pokery?
+
+First, we'll need to update the cupcakes view by replacing our class directive table fields with form fields. This time we will be using Angular's built-in `ng-model` directive instead of our custom directives. `ng-model` performs **two-way data binding**. That means that any changes the user makes are immediately refleced in Angular's model of that object in **real time**.
+
+`views/cupcakes/index.php`
+
+```html
+<body ng-app="CupcakeApp" ng-controller="cupcakesController">
+  <table class="table table-bordered table-collapse table-striped">
+    <thead>
+      <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Description</th>
+          <th>Cake Flavor 1</th>
+          <th>Cake Flavor 2</th>
+          <th>Cake Color</th>
+          <th>Icing Flavor</th>
+          <th>Icing Color</th>
+          <th>Fondant?</th>
+          <th>Calories</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="cupcake in cupcakesList">
+        <td>{{cupcake.id}}</td>
+        <td><input class="form-control" ng-model="cupcake.name" /></td>
+        <td><textarea class="form-control" ng-model="cupcake.description"></textarea></td>
+        <td><input class="form-control" ng-model="cupcake.cake_flavor_1"></td>
+        <td><input class="form-control" ng-model="cupcake.cake_flavor_2"></td>
+        <td><input class="form-control" ng-model="cupcake.cake_color"></td>
+        <td><input class="form-control" ng-model="cupcake.icing_flavor"></td>
+        <td><input class="form-control" ng-model="cupcake.icing_color"></td>
+        <td><input class="form-control" ng-model="cupcake.fondant"></td>
+        <td><input class="form-control" ng-model="cupcake.calories"></td>
+      </tr>
+    </tbody>
+  </table>
+  <button class="btn btn-primary pull-right">Save</button>
+</body>
+```
+
+Go ahead and comment out `CupcakeApp.directives` in `web/js/application.js`. After this change, it is no longer required.
+
+```js
+angular.module('CupcakeApp', [
+  'CupcakeApp.controllers',
+  'CupcakeApp.services',
+  // 'CupcakeApp.directives'
+]);
+```
+
+Now you'll see the same exact table, except all the data fields are now editable. Let's wire up the rest of it to save any changes made to this cupcake data.
+
+```js
+lorem.ipsum = dolor(sit, amet){
+}
+```
