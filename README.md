@@ -48,7 +48,36 @@ public function actionIndex()
 }
 . . .
 ```
-This will ensure that our `index.php` page will load when we request `http://localhost/cupcakes`. Let's create that page now.
+This will ensure that our `index.php` page will load when we request `http://localhost/cupcakes`. We'll create that page in a second. 
+
+Next, we need a way to expose our cupcakes data in a format Angular can interpret. Yii happens to have a JSON formatter that works well in just such a situation.
+`controllers/CupcakesApiController.php`
+```php
+<?php
+namespace app\controllers;
+
+use Yii;
+use app\models\Cupcakes;
+use app\controllers\CupcakesController;
+
+class CupcakesApiController extends CupcakesController
+{
+    public function actionView($id)
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        $cupcakes = new Cupcakes();
+        return $cupcakes->viewCupcakeDetails($id);
+    }
+
+    public function actionIndex()
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        $cupcakes = new Cupcakes();
+        return $cupcakes->viewAllCupcakes();
+    }
+}
+```
+Now let's create `index.php` so our Yii controller can render the view when we ask it to.
 
 `views/cupcakes/index.php`
 ```html
@@ -62,32 +91,85 @@ This will ensure that our `index.php` page will load when we request `http://loc
 
 Here's where Angular gets invoked. Any attribute in an html page that starts with `ng-` is called a directive. As the browser renders the page, Angular takes any `ng-` attribute and evaluates it as necessary. This keeps your html looking like html while allowing for dynamic data manipulation at the same time.
 
-Directives can take a couple of other forms too:
+You can even create your own app-specific directives:
 ```html
 <html>
-  <body ng-app="cupcakes" ng-controller="CupcakeController">
-    <div id="element-directives">
-      <cupcake-name></cupcake-name>
-      <cupcake-description></cupcake-description>
-      <cupcake-cake-color></cupcake-cake-color>
-    </div>
-    <div id="class-directives">
-      <div class="cupcake-name"></div>
-      <div class="cupcake-description"></div>
-      <div class="cupcake-cake-color"></div>
-    </div>
+  <body ng-app="CupcakeApp" ng-controller="cupcakesController">
+  <table class="table table-bordered table-collapse table-striped">
+    <thead>
+      <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Description</th>
+          <th>Cake Flavor 1</th>
+          <th>Cake Flavor 2</th>
+          <th>Cake Color</th>
+          <th>Icing Flavor</th>
+          <th>Icing Color</th>
+          <th>Fondant?</th>
+          <th>Calories</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="cupcake in cupcakesList">
+        <td class="cupcake-id"></td>
+        <td class="cupcake-name"></td>
+        <td class="cupcake-description"></td>
+        <td class="cupcake-cake-flavor-1"></td>
+        <td class="cupcake-cake-flavor-2"></td>
+        <td class="cupcake-cake-color"></td>
+        <td class="cupcake-icing-flavor"></td>
+        <td class="cupcake-icing-color"></td>
+        <td class="cupcake-fondant"></td>
+        <td class="cupcake-calories"></td>
+      </tr>
+    </tbody>
+  </table>
+</body>
   </body>
 </html>
 ```
-**Element** directives allow you to create your own tags outside the HTML spec. Wacky!
+In this example, we're using **class** directives. You can also create directives on **attributes** (e.g. `<div cupcake-description></div>`) and **elements** (e.g. `<cupcake-description></cupcake-description>`). Or, if you just need a quick element of your object's model injected into the page, you can just drop it in: `{{cupcake.description}}`
 
-**Class** directives allow you to bind data to a container based off its class name. Handy if you need css styles to match the container's contents 100% of the time!
+Let's create these directives in our app and really Angularify this page!
 
-With the appropriate directive setup in your `CupcakeController`, both of its child `div`s above should render the same content.
-
-Let's create a directive and really Angularify this page!
+In `application.js`, we will instantiate the module and inject its dependencies in the brackets.
 `web/js/application.js`
 ```js
-(function () {
-}).load(this);
+angular.module('CupcakeApp', [
+  'CupcakeApp.controllers',
+  'CupcakeApp.services',
+  'CupcakeApp.directives'
+]);
+```
+Now, we will create the dependencies:
+`cupcakesController` tells the app how to obtain a cupcake object:
+`web/js/controllers.js`
+```js
+angular.module('CupcakeApp.controllers', [])
+    .controller('cupcakesController', function($scope, cupcakeAPIservice) {
+    $scope.cupcakesList = [];
+
+    cupcakeAPIservice.getCupcakes().success(function (response) {
+        $scope.cupcakesList = response;
+    });
+});
+```
+Next, our `cupcakeAPIservice` will tell the app where the cupcake data is stored. In this case, it's exposed by our `cupcakes-api`.
+`js/services.js`
+```js
+angular.module('CupcakeApp.services', [])
+    .factory('cupcakeAPIservice', function($http) {
+
+    var cupcakeAPI = {};
+
+    cupcakeAPI.getCupcakes = function() {
+        return $http({
+            method: 'GET',
+            url: 'cupcakes-api/index'
+        });
+    }
+
+    return cupcakeAPI;
+});
 ```
