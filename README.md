@@ -10,13 +10,10 @@ So how do we roll our own interface *and* integrate Yii's fancy MVC architecture
 I've been using a two-pronged approach and it's proven to be quite flexible:
 
 ##Yii's REST service with Angular.js
+>[Two great tastes that taste great together!](http://youtu.be/DJLDF6qZUX0#t=5)
 ####"Hang on there, M&aelig;stro. Isn't Angular overcomplicating things?"
 
 Not any more than using Bootstrap or jQuery overcomplicates things. I'll illustrate how they work together as we move along.
-
->[Two great tastes that taste great together!](http://youtu.be/DJLDF6qZUX0#t=5)
-
-While we won't need get into which of the two is Chocolate and which is Peanut Butter, here's a quick defense of the Yii/Angular approach:
 
 With Yii handling all of your users' requests, every change in data is accompanied with a full page reload. Even with browser caching, that can really slow down the user experience and trigger a ton of redundant server requests. If can we hand off some of the data manipulation to an AJAX-like interface that updates the UI without a full page refresh, we'll end up with a snappier interface and lower network overhead.
 
