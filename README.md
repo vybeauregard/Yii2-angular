@@ -330,3 +330,12 @@ Now you'll see the same exact table, except all the data fields are now editable
 lorem.ipsum = dolor(sit, amet){
 }
 ```
+
+updated in the interim:
+
+* `CupcakesApiController::actionUpdate();`
+* `services.js::saveCupcakes()`
+* `controllers.js::saveCupcakes()`
+* `index.php`
+
+still cannot get data to save on `ng-click()`
