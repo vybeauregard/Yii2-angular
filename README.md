@@ -11,6 +11,7 @@ I've been using a two-pronged approach and it's proven to be quite flexible:
 
 ##Yii's REST service with Angular.js
 >[Two great tastes that taste great together!](http://youtu.be/DJLDF6qZUX0#t=5)
+
 ####"Hang on there, M&aelig;stro. Isn't Angular overcomplicating things?"
 
 Not any more than using Bootstrap or jQuery overcomplicates things. I'll illustrate how they work together as we move along.
