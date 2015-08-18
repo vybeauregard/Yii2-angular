@@ -78,6 +78,26 @@ class CupcakesApiController extends CupcakesController
         $cupcakes = new Cupcakes();
         return $cupcakes->viewAllCupcakes();
     }
+    
+    public function actionUpdate()
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+        $request = Json::decode(Yii::$app->request->getRawBody());
+        foreach($request as $cupcake){
+            $newCupcake = $this->findModel($cupcake['id']);
+            $newCupcake->setAttributes($cupcake);
+            $newCupcake->save();
+        }
+    }
+    
+    protected function findModel($id)
+    {
+      if (($model = Cupcakes::findOne($id)) !== null) {
+        return $model;
+      } else {
+        return new Cupcake;
+      }
+  }
 }
 ```
 Now let's create `index.php` so our Yii controller can render the view when we ask it to.
@@ -102,37 +122,36 @@ You can even create your own app-specific directives:
 ```html
 <html>
   <body ng-app="CupcakeApp" ng-controller="cupcakesController">
-  <table class="table table-bordered table-collapse table-striped">
-    <thead>
-      <tr>
-          <th>ID</th>
-          <th>Name</th>
-          <th>Description</th>
-          <th>Cake Flavor 1</th>
-          <th>Cake Flavor 2</th>
-          <th>Cake Color</th>
-          <th>Icing Flavor</th>
-          <th>Icing Color</th>
-          <th>Fondant?</th>
-          <th>Calories</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr ng-repeat="cupcake in cupcakesList">
-        <td class="cupcake-id"></td>
-        <td class="cupcake-name"></td>
-        <td class="cupcake-description"></td>
-        <td class="cupcake-cake-flavor-1"></td>
-        <td class="cupcake-cake-flavor-2"></td>
-        <td class="cupcake-cake-color"></td>
-        <td class="cupcake-icing-flavor"></td>
-        <td class="cupcake-icing-color"></td>
-        <td class="cupcake-fondant"></td>
-        <td class="cupcake-calories"></td>
-      </tr>
-    </tbody>
-  </table>
-</body>
+    <table class="table table-bordered table-collapse table-striped">
+      <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Cake Flavor 1</th>
+            <th>Cake Flavor 2</th>
+            <th>Cake Color</th>
+            <th>Icing Flavor</th>
+            <th>Icing Color</th>
+            <th>Fondant?</th>
+            <th>Calories</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="cupcake in cupcakesList">
+          <td class="cupcake-id"></td>
+          <td class="cupcake-name"></td>
+          <td class="cupcake-description"></td>
+          <td class="cupcake-cake-flavor-1"></td>
+          <td class="cupcake-cake-flavor-2"></td>
+          <td class="cupcake-cake-color"></td>
+          <td class="cupcake-icing-flavor"></td>
+          <td class="cupcake-icing-color"></td>
+          <td class="cupcake-fondant"></td>
+          <td class="cupcake-calories"></td>
+        </tr>
+      </tbody>
+    </table>
   </body>
 </html>
 ```
@@ -162,6 +181,12 @@ angular.module('CupcakeApp.controllers', [])
     cupcakeAPIservice.getCupcakes().success(function (response) {
         $scope.cupcakesList = response;
     });
+    
+    $scope.saveCupcakes = function(){
+      cupcakeAPIservice.saveCupcakes($scope.cupcakesList).success(function (response) {
+        $scope.cupcakesList = response;
+      });
+    }
 });
 ```
 Next, our `cupcakeAPIservice` will tell the app where the cupcake data is stored. In this case, it's exposed by our `cupcakes-api`.
@@ -178,7 +203,14 @@ angular.module('CupcakeApp.services', [])
             method: 'GET',
             url: 'cupcakes-api/index'
         });
-    }
+    };
+    cupcakeAPI.saveCupcakes = function(data) {
+        return $http({
+            method: 'PUT',
+            data: data,
+            url: 'cupcakes-api/update'
+        });
+    };
 
     return cupcakeAPI;
 });
@@ -306,15 +338,17 @@ First, we'll need to update the cupcakes view by replacing our class directive t
         <td><input class="form-control" ng-model="cupcake.icing_flavor"></td>
         <td><input class="form-control" ng-model="cupcake.icing_color"></td>
         <td><input class="form-control" ng-model="cupcake.fondant"></td>
-        <td><input class="form-control" ng-model="cupcake.calories"></td>
+        <td><input type="number" class="form-control" ng-model="cupcake.calories"></td>
       </tr>
     </tbody>
   </table>
-  <button class="btn btn-primary pull-right">Save</button>
+  <input class="btn btn-success" type="button" value="Hello" ng-click="saveCupcakes()" />
 </body>
 ```
 
-Go ahead and comment out `CupcakeApp.directives` in `web/js/application.js`. After this change, it is no longer required.
+Go ahead and comment out `CupcakeApp.directives` in `application.js`. After this change, it is no longer required.
+
+`web/js/application.js`
 
 ```js
 angular.module('CupcakeApp', [
@@ -324,18 +358,19 @@ angular.module('CupcakeApp', [
 ]);
 ```
 
-Now you'll see the same exact table, except all the data fields are now editable. Let's wire up the rest of it to save any changes made to this cupcake data.
+Likewise, including `js/directives.js` in `AppAsset.php` is no longer necessary:
 
-```js
-lorem.ipsum = dolor(sit, amet){
-}
+`assets/AppAsset.php`
+
+```php
+public $js = [
+  'js/application.js',
+  'js/controllers.js',
+  // 'js/directives.js',
+  'js/services.js',
+];
 ```
 
-updated in the interim:
+Now you'll see the same exact table, except all the data fields are now editable. We've already got the behavior wired up in our controller and service definitions, so we should now be able to save any changes made to this cupcake data.
 
-* `CupcakesApiController::actionUpdate();`
-* `services.js::saveCupcakes()`
-* `controllers.js::saveCupcakes()`
-* `index.php`
 
-still cannot get data to save on `ng-click()`
