@@ -1,426 +1,389 @@
-<!DOCTYPE html>
-<html>
-
-  <head>
-    <meta charset='utf-8'>
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <meta name="description" content="Yii2-angular : &quot;But wait,&quot; you say, &quot;Yii is too magical!&quot;">
-
-    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
-
-    <title>Yii2-angular</title>
-  </head>
-
-  <body>
-
-    <!-- HEADER -->
-    <div id="header_wrap" class="outer">
-        <header class="inner">
-          <a id="forkme_banner" href="https://github.com/vybeauregard/Yii2-angular">View on GitHub</a>
-
-          <h1 id="project_title">Yii2-angular</h1>
-          <h2 id="project_tagline">&quot;But wait,&quot; you say, &quot;Yii is too magical!&quot;</h2>
-
-            <section id="downloads">
-              <a class="zip_download_link" href="https://github.com/vybeauregard/Yii2-angular/zipball/master">Download this project as a .zip file</a>
-              <a class="tar_download_link" href="https://github.com/vybeauregard/Yii2-angular/tarball/master">Download this project as a tar.gz file</a>
-            </section>
-        </header>
-    </div>
-
-    <!-- MAIN CONTENT -->
-    <div id="main_content_wrap" class="outer">
-      <section id="main_content" class="inner">
-        <h1>
-<a id="yii2-angular" class="anchor" href="#yii2-angular" aria-hidden="true"><span class="octicon octicon-link"></span></a>Yii2-angular</h1>
-
-<h4>
-<a id="but-wait-you-say-yii-is-too-magical" class="anchor" href="#but-wait-you-say-yii-is-too-magical" aria-hidden="true"><span class="octicon octicon-link"></span></a>"But wait," you say, "Yii is too magical!"</h4>
-
-<p><a href="http://htmlpreview.github.io/?https://raw.githubusercontent.com/vybeauregard/Yii2-angular/master/index.html#22">view slide deck</a></p>
-
-<p>You're right. Sort of. The magic is in everything Yii does under the covers. And while all of the forms and pages that Gii generates are handy, sometimes they won't <em>quite</em> fit your needs. Especially when you're mixing and mashing up different models in different ways.</p>
-
-<p>But still, the rigid MVC architecture is nice to have and makes reading from and writing to the database <del>DROP TABLE</del> drop-dead easy. This part of it is worth hanging on to.</p>
-
-<p>So how do we roll our own interface <em>and</em> integrate Yii's fancy MVC architecture?</p>
-
-<p>I've been using a two-pronged approach and it's proven to be quite flexible:</p>
-
-<h2>
-<a id="yiis-rest-service-with-angularjs" class="anchor" href="#yiis-rest-service-with-angularjs" aria-hidden="true"><span class="octicon octicon-link"></span></a>Yii's REST service with Angular.js</h2>
-
-<blockquote>
-<p><a href="http://youtu.be/DJLDF6qZUX0#t=5">Two great tastes that taste great together!</a></p>
-</blockquote>
-
-<h4>
-<a id="hang-on-there-mæstro-isnt-angular-overcomplicating-things" class="anchor" href="#hang-on-there-m%C3%A6stro-isnt-angular-overcomplicating-things" aria-hidden="true"><span class="octicon octicon-link"></span></a>"Hang on there, Mæstro. Isn't Angular overcomplicating things?"</h4>
-
-<p>Not any more than using Bootstrap or jQuery overcomplicates things. I'll illustrate how they work together as we move along.</p>
-
-<p>With Yii handling all of your users' requests, every change in data is accompanied with a full page reload. Even with browser caching, that can really slow down the user experience and trigger a ton of redundant server requests. If can we hand off some of the data manipulation to an AJAX-like interface that updates the UI without a full page refresh, we'll end up with a snappier interface and lower network overhead.</p>
-
-<p>Yii is tightly integrated to your database and its models are perfect for providing a RESTful API that returns JSON objects. If you're just learning about <a href="https://en.wikipedia.org/wiki/Representational_state_transfer">REST</a>, Wikipedia is a good place to start.</p>
-
-<p>To put it briefly, REST allows us to send out small requests and receive a response with each one. When implemented, you can use the actions <code>GET</code>, <code>PUT</code>, <code>POST</code>, and <code>DELETE</code> to act upon the data store.</p>
-
-<p>How does this help us as we build web apps? Because Angular has these actions built in using its <code>$http</code> service, and sends them as <a href="https://en.wikipedia.org/wiki/XMLHttpRequest">XHR</a>. As soon as it receives a response, it updates every single place it's been referenced in the interface with no extra jQuery tricks and tomfoolery, and better still, with just a few KB changing hands.</p>
-
-<h4>
-<a id="why-do-you-keep-bashing-jquery" class="anchor" href="#why-do-you-keep-bashing-jquery" aria-hidden="true"><span class="octicon octicon-link"></span></a>Why do you keep bashing jQuery?</h4>
-
-<p>I've got nothing but love for jQuery, but like any tool, it's not always the best solution for the challenge we're presented with. Yes, it <em>can</em> perform XHR, but it does so with a much lower-level approach than Angular and leaves a lot of the mess of wiring everything together to the poor developer.</p>
-
-<h4>
-<a id="im-still-skeptical-but-show-me-something-in-action-already" class="anchor" href="#im-still-skeptical-but-show-me-something-in-action-already" aria-hidden="true"><span class="octicon octicon-link"></span></a>I'm still skeptical, but show me something in action already!</h4>
-
-<p>I was about to. Increase your calm.</p>
-
-<p>We're going to continue working with the Cupcakes app from <a href="http://vybeauregard.github.io/Yii2-Cupcakes/">my previous tutorial</a>. If you've been following along, you can pick right up where we left off. If not, clone <a href="https://github.com/vybeauregard/Yii2-Cupcakes.git">this repo</a>, checkout <code>working-branch</code>, then run <code>composer update</code> and <code>./yii migrate</code> to bring yourself up to speed.</p>
-
-<p>Before we can continue, we need to make sure Angular is a part of the assets that composer is pulling in.</p>
-
-<p><a href="https://github.com/vybeauregard/Yii2-angular/wiki/Install-Angular-into-a-Yii2-project">Angular installation walkthrough</a></p>
-
-<p>We'll use Yii's routing to access our Angular page, and we want it to be accessible via <code>http://localhost/cupcakes</code>. Let's add an action to our <code>CupcakesController</code> now.</p>
-
-<p><code>controllers/CupcakesController.php</code></p>
-
-<div class="highlight highlight-php"><pre><span class="pl-s1"><span class="pl-k">.</span> <span class="pl-k">.</span> <span class="pl-k">.</span></span>
-<span class="pl-s1"><span class="pl-k">public</span> <span class="pl-k">function</span> <span class="pl-en">actionIndex</span>()</span>
-<span class="pl-s1">{</span>
-<span class="pl-s1">  <span class="pl-k">return</span> <span class="pl-smi">$this</span><span class="pl-k">-&gt;</span>render(<span class="pl-s"><span class="pl-pds">'</span>index<span class="pl-pds">'</span></span>);</span>
-<span class="pl-s1">}</span>
-<span class="pl-s1"><span class="pl-k">.</span> <span class="pl-k">.</span> <span class="pl-k">.</span></span></pre></div>
-
-<p>This will ensure that our <code>index.php</code> page will load when we request <code>http://localhost/cupcakes</code>. We'll create that page in a second. </p>
-
-<p>Next, we need a way to expose our cupcakes data in a format Angular can interpret. Yii happens to have a JSON formatter that works well in just such a situation.</p>
-
-<p><code>controllers/CupcakesApiController.php</code></p>
-
-<div class="highlight highlight-php"><pre><span class="pl-pse">&lt;?php</span><span class="pl-s1"></span>
-<span class="pl-s1"><span class="pl-k">namespace</span> <span class="pl-en">app\controllers</span>;</span>
-<span class="pl-s1"></span>
-<span class="pl-s1"><span class="pl-k">use</span> <span class="pl-c1">Yii</span>;</span>
-<span class="pl-s1"><span class="pl-k">use</span> <span class="pl-c1">app\models\Cupcakes</span>;</span>
-<span class="pl-s1"><span class="pl-k">use</span> <span class="pl-c1">app\controllers\CupcakesController</span>;</span>
-<span class="pl-s1"></span>
-<span class="pl-s1"><span class="pl-k">class</span> <span class="pl-en">CupcakesApiController</span> <span class="pl-k">extends</span> <span class="pl-e">CupcakesController</span></span>
-<span class="pl-s1">{</span>
-<span class="pl-s1">    <span class="pl-k">public</span> <span class="pl-k">function</span> <span class="pl-en">actionView</span>(<span class="pl-smi">$id</span>)</span>
-<span class="pl-s1">    {</span>
-<span class="pl-s1">        <span class="pl-c1">\</span><span class="pl-c1">Yii</span><span class="pl-k">::</span><span class="pl-smi">$app</span><span class="pl-k">-&gt;</span><span class="pl-smi">response</span><span class="pl-k">-&gt;</span><span class="pl-smi">format</span> <span class="pl-k">=</span> <span class="pl-c1">\yii\web\</span><span class="pl-c1">Response</span><span class="pl-k">::</span><span class="pl-c1">FORMAT_JSON</span>;</span>
-<span class="pl-s1">        <span class="pl-smi">$cupcakes</span> <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-c1">Cupcakes</span>();</span>
-<span class="pl-s1">        <span class="pl-k">return</span> <span class="pl-smi">$cupcakes</span><span class="pl-k">-&gt;</span>viewCupcakeDetails(<span class="pl-smi">$id</span>);</span>
-<span class="pl-s1">    }</span>
-<span class="pl-s1"></span>
-<span class="pl-s1">    <span class="pl-k">public</span> <span class="pl-k">function</span> <span class="pl-en">actionIndex</span>()</span>
-<span class="pl-s1">    {</span>
-<span class="pl-s1">        <span class="pl-c1">\</span><span class="pl-c1">Yii</span><span class="pl-k">::</span><span class="pl-smi">$app</span><span class="pl-k">-&gt;</span><span class="pl-smi">response</span><span class="pl-k">-&gt;</span><span class="pl-smi">format</span> <span class="pl-k">=</span> <span class="pl-c1">\yii\web\</span><span class="pl-c1">Response</span><span class="pl-k">::</span><span class="pl-c1">FORMAT_JSON</span>;</span>
-<span class="pl-s1">        <span class="pl-smi">$cupcakes</span> <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-c1">Cupcakes</span>();</span>
-<span class="pl-s1">        <span class="pl-k">return</span> <span class="pl-smi">$cupcakes</span><span class="pl-k">-&gt;</span>viewAllCupcakes();</span>
-<span class="pl-s1">    }</span>
-<span class="pl-s1"></span>
-<span class="pl-s1">    <span class="pl-k">public</span> <span class="pl-k">function</span> <span class="pl-en">actionUpdate</span>()</span>
-<span class="pl-s1">    {</span>
-<span class="pl-s1">        <span class="pl-c1">\</span><span class="pl-c1">Yii</span><span class="pl-k">::</span><span class="pl-smi">$app</span><span class="pl-k">-&gt;</span><span class="pl-smi">response</span><span class="pl-k">-&gt;</span><span class="pl-smi">format</span> <span class="pl-k">=</span> <span class="pl-c1">\yii\web\</span><span class="pl-c1">Response</span><span class="pl-k">::</span><span class="pl-c1">FORMAT_JSON</span>;</span>
-<span class="pl-s1">        <span class="pl-smi">$request</span> <span class="pl-k">=</span> <span class="pl-c1">Json</span><span class="pl-k">::</span>decode(<span class="pl-c1">Yii</span><span class="pl-k">::</span><span class="pl-smi">$app</span><span class="pl-k">-&gt;</span><span class="pl-smi">request</span><span class="pl-k">-&gt;</span>getRawBody());</span>
-<span class="pl-s1">        <span class="pl-k">foreach</span>(<span class="pl-smi">$request</span> <span class="pl-k">as</span> <span class="pl-smi">$cupcake</span>){</span>
-<span class="pl-s1">            <span class="pl-smi">$newCupcake</span> <span class="pl-k">=</span> <span class="pl-smi">$this</span><span class="pl-k">-&gt;</span>findModel(<span class="pl-smi">$cupcake</span>[<span class="pl-s"><span class="pl-pds">'</span>id<span class="pl-pds">'</span></span>]);</span>
-<span class="pl-s1">            <span class="pl-smi">$newCupcake</span><span class="pl-k">-&gt;</span>setAttributes(<span class="pl-smi">$cupcake</span>);</span>
-<span class="pl-s1">            <span class="pl-smi">$newCupcake</span><span class="pl-k">-&gt;</span>save();</span>
-<span class="pl-s1">        }</span>
-<span class="pl-s1">    }</span>
-<span class="pl-s1"></span>
-<span class="pl-s1">    <span class="pl-k">protected</span> <span class="pl-k">function</span> <span class="pl-en">findModel</span>(<span class="pl-smi">$id</span>)</span>
-<span class="pl-s1">    {</span>
-<span class="pl-s1">      <span class="pl-k">if</span> ((<span class="pl-smi">$model</span> <span class="pl-k">=</span> <span class="pl-c1">Cupcakes</span><span class="pl-k">::</span>findOne(<span class="pl-smi">$id</span>)) <span class="pl-k">!</span><span class="pl-k">==</span> <span class="pl-c1">null</span>) {</span>
-<span class="pl-s1">        <span class="pl-k">return</span> <span class="pl-smi">$model</span>;</span>
-<span class="pl-s1">      } <span class="pl-k">else</span> {</span>
-<span class="pl-s1">        <span class="pl-k">return</span> <span class="pl-k">new</span> <span class="pl-c1">Cupcake</span>;</span>
-<span class="pl-s1">      }</span>
-<span class="pl-s1">  }</span>
-<span class="pl-s1">}</span></pre></div>
-
-<p>Now let's create <code>index.php</code> so our Yii controller can render the view when we ask it to.</p>
-
-<p><code>views/cupcakes/index.php</code></p>
-
-<div class="highlight highlight-html"><pre>&lt;<span class="pl-ent">html</span>&gt;
-  &lt;<span class="pl-ent">body</span> <span class="pl-e">ng-app</span>=<span class="pl-s"><span class="pl-pds">"</span>cupcakes<span class="pl-pds">"</span></span> <span class="pl-e">ng-controller</span>=<span class="pl-s"><span class="pl-pds">"</span>CupcakeController<span class="pl-pds">"</span></span>&gt;
-    . . .
-  &lt;/<span class="pl-ent">body</span>&gt;
-&lt;/<span class="pl-ent">html</span>&gt;</pre></div>
-
-<h4>
-<a id="hey-ng-app-aint-no-attribute-i-ever-heard-of-what-kind-of-witch-doctor-are-you" class="anchor" href="#hey-ng-app-aint-no-attribute-i-ever-heard-of-what-kind-of-witch-doctor-are-you" aria-hidden="true"><span class="octicon octicon-link"></span></a>Hey! <code>ng-app</code> ain't no attribute I ever heard of. What kind of witch doctor are you?</h4>
-
-<p>Here's where Angular gets invoked. Any attribute in an html page that starts with <code>ng-</code> is called a directive. As the browser renders the page, Angular takes any <code>ng-</code> attribute and evaluates it as necessary. This keeps your html looking like html while allowing for dynamic data manipulation at the same time.</p>
-
-<p>You can even create your own app-specific directives:</p>
-
-<p><code>views/cupcakes/index.php</code></p>
-
-<div class="highlight highlight-html"><pre>&lt;<span class="pl-ent">html</span>&gt;
-  &lt;<span class="pl-ent">body</span> <span class="pl-e">ng-app</span>=<span class="pl-s"><span class="pl-pds">"</span>CupcakeApp<span class="pl-pds">"</span></span> <span class="pl-e">ng-controller</span>=<span class="pl-s"><span class="pl-pds">"</span>cupcakesController<span class="pl-pds">"</span></span>&gt;
-    &lt;<span class="pl-ent">table</span> <span class="pl-e">class</span>=<span class="pl-s"><span class="pl-pds">"</span>table table-bordered table-collapse table-striped<span class="pl-pds">"</span></span>&gt;
-      &lt;<span class="pl-ent">thead</span>&gt;
-        &lt;<span class="pl-ent">tr</span>&gt;
-            &lt;<span class="pl-ent">th</span>&gt;ID&lt;/<span class="pl-ent">th</span>&gt;
-            &lt;<span class="pl-ent">th</span>&gt;Name&lt;/<span class="pl-ent">th</span>&gt;
-            &lt;<span class="pl-ent">th</span>&gt;Description&lt;/<span class="pl-ent">th</span>&gt;
-            &lt;<span class="pl-ent">th</span>&gt;Cake Flavor 1&lt;/<span class="pl-ent">th</span>&gt;
-            &lt;<span class="pl-ent">th</span>&gt;Cake Flavor 2&lt;/<span class="pl-ent">th</span>&gt;
-            &lt;<span class="pl-ent">th</span>&gt;Cake Color&lt;/<span class="pl-ent">th</span>&gt;
-            &lt;<span class="pl-ent">th</span>&gt;Icing Flavor&lt;/<span class="pl-ent">th</span>&gt;
-            &lt;<span class="pl-ent">th</span>&gt;Icing Color&lt;/<span class="pl-ent">th</span>&gt;
-            &lt;<span class="pl-ent">th</span>&gt;Fondant?&lt;/<span class="pl-ent">th</span>&gt;
-            &lt;<span class="pl-ent">th</span>&gt;Calories&lt;/<span class="pl-ent">th</span>&gt;
-        &lt;/<span class="pl-ent">tr</span>&gt;
-      &lt;/<span class="pl-ent">thead</span>&gt;
-      &lt;<span class="pl-ent">tbody</span>&gt;
-        &lt;<span class="pl-ent">tr</span> <span class="pl-e">ng-repeat</span>=<span class="pl-s"><span class="pl-pds">"</span>cupcake in cupcakesList<span class="pl-pds">"</span></span>&gt;
-          &lt;<span class="pl-ent">td</span> <span class="pl-e">class</span>=<span class="pl-s"><span class="pl-pds">"</span>cupcake-id<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">td</span>&gt;
-          &lt;<span class="pl-ent">td</span> <span class="pl-e">class</span>=<span class="pl-s"><span class="pl-pds">"</span>cupcake-name<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">td</span>&gt;
-          &lt;<span class="pl-ent">td</span> <span class="pl-e">class</span>=<span class="pl-s"><span class="pl-pds">"</span>cupcake-description<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">td</span>&gt;
-          &lt;<span class="pl-ent">td</span> <span class="pl-e">class</span>=<span class="pl-s"><span class="pl-pds">"</span>cupcake-cake-flavor-1<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">td</span>&gt;
-          &lt;<span class="pl-ent">td</span> <span class="pl-e">class</span>=<span class="pl-s"><span class="pl-pds">"</span>cupcake-cake-flavor-2<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">td</span>&gt;
-          &lt;<span class="pl-ent">td</span> <span class="pl-e">class</span>=<span class="pl-s"><span class="pl-pds">"</span>cupcake-cake-color<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">td</span>&gt;
-          &lt;<span class="pl-ent">td</span> <span class="pl-e">class</span>=<span class="pl-s"><span class="pl-pds">"</span>cupcake-icing-flavor<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">td</span>&gt;
-          &lt;<span class="pl-ent">td</span> <span class="pl-e">class</span>=<span class="pl-s"><span class="pl-pds">"</span>cupcake-icing-color<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">td</span>&gt;
-          &lt;<span class="pl-ent">td</span> <span class="pl-e">class</span>=<span class="pl-s"><span class="pl-pds">"</span>cupcake-fondant<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">td</span>&gt;
-          &lt;<span class="pl-ent">td</span> <span class="pl-e">class</span>=<span class="pl-s"><span class="pl-pds">"</span>cupcake-calories<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">td</span>&gt;
-        &lt;/<span class="pl-ent">tr</span>&gt;
-      &lt;/<span class="pl-ent">tbody</span>&gt;
-    &lt;/<span class="pl-ent">table</span>&gt;
-  &lt;/<span class="pl-ent">body</span>&gt;
-&lt;/<span class="pl-ent">html</span>&gt;</pre></div>
-
-<p>In this example, we're using <strong>class</strong> directives. You can also create directives on <strong>attributes</strong> (e.g. <code>&lt;div cupcake-description&gt;&lt;/div&gt;</code>) and <strong>elements</strong> (e.g. <code>&lt;cupcake-description&gt;&lt;/cupcake-description&gt;</code>). Or, if you just need a quick element of your object's model injected into the page, you can just drop it in: <code>{{cupcake.description}}</code></p>
-
-<p>Let's create these directives in our app and really Angularify this page!</p>
-
-<p>In <code>application.js</code>, we will instantiate the module and inject its dependencies in the brackets.</p>
-
-<p><code>web/js/application.js</code></p>
-
-<div class="highlight highlight-js"><pre>angular.<span class="pl-c1">module</span>(<span class="pl-s"><span class="pl-pds">'</span>CupcakeApp<span class="pl-pds">'</span></span>, [
-  <span class="pl-s"><span class="pl-pds">'</span>CupcakeApp.controllers<span class="pl-pds">'</span></span>,
-  <span class="pl-s"><span class="pl-pds">'</span>CupcakeApp.services<span class="pl-pds">'</span></span>,
-  <span class="pl-s"><span class="pl-pds">'</span>CupcakeApp.directives<span class="pl-pds">'</span></span>
-]);</pre></div>
-
-<p>Now, we will create the dependencies:
-<code>cupcakesController</code> tells the app how to obtain a cupcake object:</p>
-
-<p><code>web/js/controllers.js</code></p>
-
-<div class="highlight highlight-js"><pre>angular.<span class="pl-c1">module</span>(<span class="pl-s"><span class="pl-pds">'</span>CupcakeApp.controllers<span class="pl-pds">'</span></span>, [])
-    .<span class="pl-c1">controller</span>(<span class="pl-s"><span class="pl-pds">'</span>cupcakesController<span class="pl-pds">'</span></span>, <span class="pl-k">function</span>(<span class="pl-smi">$scope</span>, <span class="pl-smi">cupcakeAPIservice</span>) {
-    $scope.<span class="pl-c1">cupcakesList</span> <span class="pl-k">=</span> [];
-
-    cupcakeAPIservice.<span class="pl-c1">getCupcakes</span>().<span class="pl-c1">success</span>(<span class="pl-k">function</span> (<span class="pl-smi">response</span>) {
-        $scope.<span class="pl-c1">cupcakesList</span> <span class="pl-k">=</span> response;
-    });
-
-    <span class="pl-c1">$scope</span>.<span class="pl-en">saveCupcakes</span> <span class="pl-k">=</span> <span class="pl-k">function</span>(){
-      cupcakeAPIservice.<span class="pl-c1">saveCupcakes</span>($scope.<span class="pl-c1">cupcakesList</span>).<span class="pl-c1">success</span>(<span class="pl-k">function</span> (<span class="pl-smi">response</span>) {
-        $scope.<span class="pl-c1">cupcakesList</span> <span class="pl-k">=</span> response;
-      });
-    }
-});</pre></div>
-
-<p>Next, our <code>cupcakeAPIservice</code> will tell the app where the cupcake data is stored. In this case, it's exposed by our <code>cupcakes-api</code>.</p>
-
-<p><code>web/js/services.js</code></p>
-
-<div class="highlight highlight-js"><pre>angular.<span class="pl-c1">module</span>(<span class="pl-s"><span class="pl-pds">'</span>CupcakeApp.services<span class="pl-pds">'</span></span>, [])
-    .<span class="pl-c1">factory</span>(<span class="pl-s"><span class="pl-pds">'</span>cupcakeAPIservice<span class="pl-pds">'</span></span>, <span class="pl-k">function</span>(<span class="pl-smi">$http</span>) {
-
-    <span class="pl-k">var</span> cupcakeAPI <span class="pl-k">=</span> {};
-
-    <span class="pl-c1">cupcakeAPI</span>.<span class="pl-en">getCupcakes</span> <span class="pl-k">=</span> <span class="pl-k">function</span>() {
-        <span class="pl-k">return</span> $<span class="pl-c1">http</span>({
-            method<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>GET<span class="pl-pds">'</span></span>,
-            url<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>cupcakes-api/index<span class="pl-pds">'</span></span>
-        });
-    };
-    <span class="pl-c1">cupcakeAPI</span>.<span class="pl-en">saveCupcakes</span> <span class="pl-k">=</span> <span class="pl-k">function</span>(<span class="pl-smi">data</span>) {
-        <span class="pl-k">return</span> $<span class="pl-c1">http</span>({
-            method<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>PUT<span class="pl-pds">'</span></span>,
-            data<span class="pl-k">:</span> data,
-            url<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>cupcakes-api/update<span class="pl-pds">'</span></span>
-        });
-    };
-
-    <span class="pl-k">return</span> cupcakeAPI;
-});</pre></div>
-
-<p>Since Yii already has a <code>cupcake</code> model defined, the JSON object it returns will pass everything along to Angular without the need to redefine the same object there too.</p>
-
-<p>The last dependency we have to create contains our <code>directives</code>. Here is where Angular takes our custom class names and replaces its contents with attributes from our cupcake model using templates we define:</p>
-
-<p><code>web/js/directives.js</code></p>
-
-<div class="highlight highlight-js"><pre>angular.<span class="pl-c1">module</span>(<span class="pl-s"><span class="pl-pds">'</span>CupcakeApp.directives<span class="pl-pds">'</span></span>, [])
-    .<span class="pl-c1">directive</span>(<span class="pl-s"><span class="pl-pds">'</span>cupcakeId<span class="pl-pds">'</span></span>, <span class="pl-k">function</span>() {
-        <span class="pl-k">return</span> {
-            restrict<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>CE<span class="pl-pds">'</span></span>,
-            replace<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>true<span class="pl-pds">'</span></span>,
-            template<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>&lt;td&gt;{{cupcake.id}}&lt;/td&gt;<span class="pl-pds">'</span></span>
-        }
-    }).<span class="pl-c1">directive</span>(<span class="pl-s"><span class="pl-pds">'</span>cupcakeName<span class="pl-pds">'</span></span>, <span class="pl-k">function</span>() {
-        <span class="pl-k">return</span> {
-            restrict<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>CE<span class="pl-pds">'</span></span>,
-            replace<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>true<span class="pl-pds">'</span></span>,
-            template<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>&lt;td&gt;{{cupcake.name}}&lt;/td&gt;<span class="pl-pds">'</span></span>
-        }
-    }).<span class="pl-c1">directive</span>(<span class="pl-s"><span class="pl-pds">'</span>cupcakeDescription<span class="pl-pds">'</span></span>, <span class="pl-k">function</span>() {
-        <span class="pl-k">return</span> {
-            restrict<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>CE<span class="pl-pds">'</span></span>,
-            replace<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>true<span class="pl-pds">'</span></span>,
-            template<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>&lt;td&gt;{{cupcake.description}}&lt;/td&gt;<span class="pl-pds">'</span></span>
-        }
-    }).<span class="pl-c1">directive</span>(<span class="pl-s"><span class="pl-pds">'</span>cupcakeCakeFlavor1<span class="pl-pds">'</span></span>, <span class="pl-k">function</span>() {
-        <span class="pl-k">return</span> {
-            restrict<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>CE<span class="pl-pds">'</span></span>,
-            replace<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>true<span class="pl-pds">'</span></span>,
-            template<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>&lt;td&gt;{{cupcake.cake_flavor_1}}&lt;/td&gt;<span class="pl-pds">'</span></span>
-        }
-    }).<span class="pl-c1">directive</span>(<span class="pl-s"><span class="pl-pds">'</span>cupcakeCakeFlavor2<span class="pl-pds">'</span></span>, <span class="pl-k">function</span>() {
-        <span class="pl-k">return</span> {
-            restrict<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>CE<span class="pl-pds">'</span></span>,
-            replace<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>true<span class="pl-pds">'</span></span>,
-            template<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>&lt;td&gt;{{cupcake.cake_flavor_2}}&lt;/td&gt;<span class="pl-pds">'</span></span>
-        }
-    }).<span class="pl-c1">directive</span>(<span class="pl-s"><span class="pl-pds">'</span>cupcakeCakeColor<span class="pl-pds">'</span></span>, <span class="pl-k">function</span>() {
-        <span class="pl-k">return</span> {
-            restrict<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>CE<span class="pl-pds">'</span></span>,
-            replace<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>true<span class="pl-pds">'</span></span>,
-            template<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>&lt;td&gt;{{cupcake.cake_color}}&lt;/td&gt;<span class="pl-pds">'</span></span>
-        }
-    }).<span class="pl-c1">directive</span>(<span class="pl-s"><span class="pl-pds">'</span>cupcakeIcingFlavor<span class="pl-pds">'</span></span>, <span class="pl-k">function</span>() {
-        <span class="pl-k">return</span> {
-            restrict<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>CE<span class="pl-pds">'</span></span>,
-            replace<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>true<span class="pl-pds">'</span></span>,
-            template<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>&lt;td&gt;{{cupcake.icing_flavor}}&lt;/td&gt;<span class="pl-pds">'</span></span>
-        }
-    }).<span class="pl-c1">directive</span>(<span class="pl-s"><span class="pl-pds">'</span>cupcakeIcingColor<span class="pl-pds">'</span></span>, <span class="pl-k">function</span>() {
-        <span class="pl-k">return</span> {
-            restrict<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>CE<span class="pl-pds">'</span></span>,
-            replace<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>true<span class="pl-pds">'</span></span>,
-            template<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>&lt;td&gt;{{cupcake.icing_color}}&lt;/td&gt;<span class="pl-pds">'</span></span>
-        }
-    }).<span class="pl-c1">directive</span>(<span class="pl-s"><span class="pl-pds">'</span>cupcakeFondant<span class="pl-pds">'</span></span>, <span class="pl-k">function</span>() {
-        <span class="pl-k">return</span> {
-            restrict<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>CE<span class="pl-pds">'</span></span>,
-            replace<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>true<span class="pl-pds">'</span></span>,
-            template<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>&lt;td&gt;{{cupcake.fondant}}&lt;/td&gt;<span class="pl-pds">'</span></span>
-        }
-    }).<span class="pl-c1">directive</span>(<span class="pl-s"><span class="pl-pds">'</span>cupcakeCalories<span class="pl-pds">'</span></span>, <span class="pl-k">function</span>() {
-        <span class="pl-k">return</span> {
-            restrict<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>CE<span class="pl-pds">'</span></span>,
-            replace<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>true<span class="pl-pds">'</span></span>,
-            template<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>&lt;td&gt;{{cupcake.calories}}&lt;/td&gt;<span class="pl-pds">'</span></span>
-        }
-    });</pre></div>
-
-<p>You'll notice in the template definition of each of these directives we use double curly brace notation. This tells angular we want to access a property of our <code>cupcake</code> object, as defined by our controller.</p>
-
-<p>Now that we have all of these extra JS files, we need to tell Yii to load them when the app is requested.</p>
-
-<p><code>assets/AppAsset.php</code></p>
-
-<div class="highlight highlight-php"><pre><span class="pl-s1"><span class="pl-k">.</span> <span class="pl-k">.</span> <span class="pl-k">.</span></span>
-<span class="pl-s1"><span class="pl-k">public</span> <span class="pl-smi">$js</span> <span class="pl-k">=</span> [</span>
-<span class="pl-s1">  <span class="pl-s"><span class="pl-pds">'</span>js/application.js<span class="pl-pds">'</span></span>,</span>
-<span class="pl-s1">  <span class="pl-s"><span class="pl-pds">'</span>js/controllers.js<span class="pl-pds">'</span></span>,</span>
-<span class="pl-s1">  <span class="pl-s"><span class="pl-pds">'</span>js/directives.js<span class="pl-pds">'</span></span>,</span>
-<span class="pl-s1">  <span class="pl-s"><span class="pl-pds">'</span>js/services.js<span class="pl-pds">'</span></span>,</span>
-<span class="pl-s1">];</span>
-<span class="pl-s1"><span class="pl-k">.</span> <span class="pl-k">.</span> <span class="pl-k">.</span></span></pre></div>
-
-<p>Now refresh your app and you should see Angular work its magic.</p>
-
-<h4>
-<a id="that-was-an-awful-lot-of-work-for-a-static-table-yii-already-gave-us-that-out-of-the-box" class="anchor" href="#that-was-an-awful-lot-of-work-for-a-static-table-yii-already-gave-us-that-out-of-the-box" aria-hidden="true"><span class="octicon octicon-link"></span></a>That was an awful lot of work for a static table. Yii already gave us that out of the box.</h4>
-
-<p>You're right. If we're just spitting out data and not exposing any updating capability to the user, this isn't a good solution. But let's say our cupcake baker wants to batch update her entire inventory of cupcakes without a bunch of back and forth jiggery-pokery?</p>
-
-<p>First, we'll need to update the cupcakes view by replacing our class directive table fields with form fields. This time we will be using Angular's built-in <code>ng-model</code> directive instead of our custom directives. <code>ng-model</code> performs <strong>two-way data binding</strong>. That means that any changes the user makes are immediately refleced in Angular's model of that object in <strong>real time</strong>.</p>
-
-<p><code>views/cupcakes/index.php</code></p>
-
-<div class="highlight highlight-html"><pre>&lt;<span class="pl-ent">body</span> <span class="pl-e">ng-app</span>=<span class="pl-s"><span class="pl-pds">"</span>CupcakeApp<span class="pl-pds">"</span></span> <span class="pl-e">ng-controller</span>=<span class="pl-s"><span class="pl-pds">"</span>cupcakesController<span class="pl-pds">"</span></span>&gt;
-  &lt;<span class="pl-ent">table</span> <span class="pl-e">class</span>=<span class="pl-s"><span class="pl-pds">"</span>table table-bordered table-collapse table-striped<span class="pl-pds">"</span></span>&gt;
-    &lt;<span class="pl-ent">thead</span>&gt;
-      &lt;<span class="pl-ent">tr</span>&gt;
-          &lt;<span class="pl-ent">th</span>&gt;ID&lt;/<span class="pl-ent">th</span>&gt;
-          &lt;<span class="pl-ent">th</span>&gt;Name&lt;/<span class="pl-ent">th</span>&gt;
-          &lt;<span class="pl-ent">th</span>&gt;Description&lt;/<span class="pl-ent">th</span>&gt;
-          &lt;<span class="pl-ent">th</span>&gt;Cake Flavor 1&lt;/<span class="pl-ent">th</span>&gt;
-          &lt;<span class="pl-ent">th</span>&gt;Cake Flavor 2&lt;/<span class="pl-ent">th</span>&gt;
-          &lt;<span class="pl-ent">th</span>&gt;Cake Color&lt;/<span class="pl-ent">th</span>&gt;
-          &lt;<span class="pl-ent">th</span>&gt;Icing Flavor&lt;/<span class="pl-ent">th</span>&gt;
-          &lt;<span class="pl-ent">th</span>&gt;Icing Color&lt;/<span class="pl-ent">th</span>&gt;
-          &lt;<span class="pl-ent">th</span>&gt;Fondant?&lt;/<span class="pl-ent">th</span>&gt;
-          &lt;<span class="pl-ent">th</span>&gt;Calories&lt;/<span class="pl-ent">th</span>&gt;
-      &lt;/<span class="pl-ent">tr</span>&gt;
-    &lt;/<span class="pl-ent">thead</span>&gt;
-    &lt;<span class="pl-ent">tbody</span>&gt;
-      &lt;<span class="pl-ent">tr</span> <span class="pl-e">ng-repeat</span>=<span class="pl-s"><span class="pl-pds">"</span>cupcake in cupcakesList<span class="pl-pds">"</span></span>&gt;
-        &lt;<span class="pl-ent">td</span>&gt;{{cupcake.id}}&lt;/<span class="pl-ent">td</span>&gt;
-        &lt;<span class="pl-ent">td</span>&gt;&lt;<span class="pl-ent">input</span> <span class="pl-e">class</span>=<span class="pl-s"><span class="pl-pds">"</span>form-control<span class="pl-pds">"</span></span> <span class="pl-e">ng-model</span>=<span class="pl-s"><span class="pl-pds">"</span>cupcake.name<span class="pl-pds">"</span></span> /&gt;&lt;/<span class="pl-ent">td</span>&gt;
-        &lt;<span class="pl-ent">td</span>&gt;&lt;<span class="pl-ent">textarea</span> <span class="pl-e">class</span>=<span class="pl-s"><span class="pl-pds">"</span>form-control<span class="pl-pds">"</span></span> <span class="pl-e">ng-model</span>=<span class="pl-s"><span class="pl-pds">"</span>cupcake.description<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">textarea</span>&gt;&lt;/<span class="pl-ent">td</span>&gt;
-        &lt;<span class="pl-ent">td</span>&gt;&lt;<span class="pl-ent">input</span> <span class="pl-e">class</span>=<span class="pl-s"><span class="pl-pds">"</span>form-control<span class="pl-pds">"</span></span> <span class="pl-e">ng-model</span>=<span class="pl-s"><span class="pl-pds">"</span>cupcake.cake_flavor_1<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">td</span>&gt;
-        &lt;<span class="pl-ent">td</span>&gt;&lt;<span class="pl-ent">input</span> <span class="pl-e">class</span>=<span class="pl-s"><span class="pl-pds">"</span>form-control<span class="pl-pds">"</span></span> <span class="pl-e">ng-model</span>=<span class="pl-s"><span class="pl-pds">"</span>cupcake.cake_flavor_2<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">td</span>&gt;
-        &lt;<span class="pl-ent">td</span>&gt;&lt;<span class="pl-ent">input</span> <span class="pl-e">class</span>=<span class="pl-s"><span class="pl-pds">"</span>form-control<span class="pl-pds">"</span></span> <span class="pl-e">ng-model</span>=<span class="pl-s"><span class="pl-pds">"</span>cupcake.cake_color<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">td</span>&gt;
-        &lt;<span class="pl-ent">td</span>&gt;&lt;<span class="pl-ent">input</span> <span class="pl-e">class</span>=<span class="pl-s"><span class="pl-pds">"</span>form-control<span class="pl-pds">"</span></span> <span class="pl-e">ng-model</span>=<span class="pl-s"><span class="pl-pds">"</span>cupcake.icing_flavor<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">td</span>&gt;
-        &lt;<span class="pl-ent">td</span>&gt;&lt;<span class="pl-ent">input</span> <span class="pl-e">class</span>=<span class="pl-s"><span class="pl-pds">"</span>form-control<span class="pl-pds">"</span></span> <span class="pl-e">ng-model</span>=<span class="pl-s"><span class="pl-pds">"</span>cupcake.icing_color<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">td</span>&gt;
-        &lt;<span class="pl-ent">td</span>&gt;&lt;<span class="pl-ent">input</span> <span class="pl-e">class</span>=<span class="pl-s"><span class="pl-pds">"</span>form-control<span class="pl-pds">"</span></span> <span class="pl-e">ng-model</span>=<span class="pl-s"><span class="pl-pds">"</span>cupcake.fondant<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">td</span>&gt;
-        &lt;<span class="pl-ent">td</span>&gt;&lt;<span class="pl-ent">input</span> <span class="pl-e">type</span>=<span class="pl-s"><span class="pl-pds">"</span>number<span class="pl-pds">"</span></span> <span class="pl-e">class</span>=<span class="pl-s"><span class="pl-pds">"</span>form-control<span class="pl-pds">"</span></span> <span class="pl-e">ng-model</span>=<span class="pl-s"><span class="pl-pds">"</span>cupcake.calories<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">td</span>&gt;
-      &lt;/<span class="pl-ent">tr</span>&gt;
-    &lt;/<span class="pl-ent">tbody</span>&gt;
-  &lt;/<span class="pl-ent">table</span>&gt;
-  &lt;<span class="pl-ent">input</span> <span class="pl-e">class</span>=<span class="pl-s"><span class="pl-pds">"</span>btn btn-success<span class="pl-pds">"</span></span> <span class="pl-e">type</span>=<span class="pl-s"><span class="pl-pds">"</span>button<span class="pl-pds">"</span></span> <span class="pl-e">value</span>=<span class="pl-s"><span class="pl-pds">"</span>Hello<span class="pl-pds">"</span></span> <span class="pl-e">ng-click</span>=<span class="pl-s"><span class="pl-pds">"</span>saveCupcakes()<span class="pl-pds">"</span></span> /&gt;
-&lt;/<span class="pl-ent">body</span>&gt;</pre></div>
-
-<p>Go ahead and comment out <code>CupcakeApp.directives</code> in <code>application.js</code>. After this change, it is no longer required.</p>
-
-<p><code>web/js/application.js</code></p>
-
-<div class="highlight highlight-js"><pre>angular.<span class="pl-c1">module</span>(<span class="pl-s"><span class="pl-pds">'</span>CupcakeApp<span class="pl-pds">'</span></span>, [
-  <span class="pl-s"><span class="pl-pds">'</span>CupcakeApp.controllers<span class="pl-pds">'</span></span>,
-  <span class="pl-s"><span class="pl-pds">'</span>CupcakeApp.services<span class="pl-pds">'</span></span>,
-  <span class="pl-c">// 'CupcakeApp.directives'</span>
-]);</pre></div>
-
-<p>Likewise, including <code>js/directives.js</code> in <code>AppAsset.php</code> is no longer necessary:</p>
-
-<p><code>assets/AppAsset.php</code></p>
-
-<div class="highlight highlight-php"><pre><span class="pl-s1"><span class="pl-k">public</span> <span class="pl-smi">$js</span> <span class="pl-k">=</span> [</span>
-<span class="pl-s1">  <span class="pl-s"><span class="pl-pds">'</span>js/application.js<span class="pl-pds">'</span></span>,</span>
-<span class="pl-s1">  <span class="pl-s"><span class="pl-pds">'</span>js/controllers.js<span class="pl-pds">'</span></span>,</span>
-<span class="pl-s1">  <span class="pl-c">// 'js/directives.js',</span></span>
-<span class="pl-s1">  <span class="pl-s"><span class="pl-pds">'</span>js/services.js<span class="pl-pds">'</span></span>,</span>
-<span class="pl-s1">];</span></pre></div>
-
-<p>Now you'll see the same exact table, except all the data fields are now editable. We've already got the behavior wired up in our controller and service definitions, so we should now be able to save any changes made to this cupcake data.</p>
-      </section>
-    </div>
-
-    <!-- FOOTER  -->
-    <div id="footer_wrap" class="outer">
-      <footer class="inner">
-        <p class="copyright">Yii2-angular maintained by <a href="https://github.com/vybeauregard">vybeauregard</a></p>
-        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
-      </footer>
-    </div>
-
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Yii2: an Introduction</title>
+
+		<meta name="description" content="An introduction to Yii2 and Angular">
+		<meta name="author" content="Trey Beauregard">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/league.css" id="theme">
+        
+        <style>
+            img {
+                border:0px !important;
+                background: none !important;
+                box-shadow: none !important;
+            }
+            li pre {
+                line-height: 2em !important;
+            }
+            pre {
+                box-shadow: none !important;
+                background-color: rgba(0, 0, 0, 0.25) !important;
+                padding: 0.2em !important;
+                border-radius: 0.3em !important;
+                white-space: nowrap;
+            }
+            pre.wrap {
+                white-space: pre !important;
+            }
+            pre.block {
+                text-align: center !important;
+                font-size: 1.25em;
+            }
+            pre.inline {
+                display:inline;
+                font-size: 1em;
+            }
+            .yii {
+                background-image: url('img/000-yii-watermark.png');
+                background-size: contain !important;
+                background-repeat: no-repeat !important;
+                background-position-y: bottom !important;
+                min-height: 50px;
+            }
+            .yii-angular {
+                background-image: url('img/000-yii-angular-watermark.png');
+                background-size: contain !important;
+                background-repeat: no-repeat !important;
+                background-position-y: bottom !important;
+                min-height: 90px;
+            }
+        </style>
+
+		<!-- Code syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section>
+                    <img src="img/00-yii.png" />
+				</section>
+
+				<section>
+                    <h2>config</h2>
+                    <ul>
+                        <li class="fragment">error handling</li>
+                        <li class="fragment">caching</li>
+                        <li class="fragment">database</li>
+                        <li class="fragment">time zone</li>
+                        <li class="fragment">url management</li>
+                    </ul>
+                    <div class="yii"></div>
+				</section>
+
+                <section id="file-structure">
+                    <section>
+                        <h2>file structure</h2>
+
+                        <p class="fragment">or</p>
+                        <div class="fragment">
+                            <p>Keeping the Varmints Out</p>
+                            <img src="img/01-varmints.gif" />
+                        </div>
+                        <div class="yii"></div>
+                    </section>
+                    <section>
+                        <h2>file structure</h2>
+                        <ul>
+                            <li class="fragment">migrations</li>
+                            <li class="fragment">controllers</li>
+                            <li class="fragment">models</li>
+                            <li class="fragment">views</li>
+                            <li class="fragment">web</li>
+                        </ul>
+                        <div class="yii"></div>
+                    </section>
+                </section>
+
+				<section id="migrations">
+                    <section>
+                        <h2>migrations</h2>
+                        <p>
+                            <img src="img/02-migration.jpg" />
+                        </p>
+                        <div class="yii"></div>
+                    </section>
+                    <section>
+                        <h2>migrations</h2>
+                        <p>
+                            <pre class="block">$ ./yii migrate/create</pre>
+                        </p>
+                        <div class="yii"></div>
+                    </section>
+                    <section>
+                        <h2>migrations</h2>
+                        <p>
+                            <pre class="block">$ ./yii migrate/up</pre>
+                        </p>
+                        <div class="yii"></div>
+                    </section>
+                    <section>
+                        <h2>migrations</h2>
+                        <p>
+                            <pre class="block">$ ./yii migrate/down</pre>
+                        </p>
+                        <div class="yii"></div>
+                    </section>
+                </section>
     
+                <section id="models">
+                    <section>
+                        <h2>models</h2>
+                        <p>
+                            <img src="img/04-model.gif" />
+                        </p>
+                        <div class="yii"></div>
+                    </section>
+                    <section>
+                        <h2>models</h2>
+                        <p>
+                            Gii will generate models based off the database table structure.
+                        </p>
+                        <div class="yii"></div>
+                    </section>
+                    <section>
+                        <h2>models</h2>
+                        <p>
+                            Navigate to Gii in your browser and tell it what table to use as a template.
+                        </p>
+                        <pre class="fragment inline">http://example.com/index.php/gii</pre>
+                        <div class="yii"></div>
+                    </section>
+                    <section>
+                        <h2>models</h2>
+                        <p>
+                            <pre class="inline">rules()</pre> allows you to set validation parameters right in the model.
+                        </p>
+                        <div class="yii"></div>
+                    </section>
+                    <section>
+                        <h2>models</h2>
+                        <p>
+                            table relationships can also be defined here.
+                        </p>
+                        <div class="yii"></div>
+                    </section>
+                </section>
+                <section id="controllers">
+                    <section>
+                        <h2>controllers</h2>
+                        <p>
+                            <img src="img/05-controllers.gif" />
+                        </p>
+                        <div class="yii"></div>
+                    </section>
+                    <section>
+                        <h2>controllers</h2>
+                        <p>
+                            tell Yii where to go based off the user&rsquo;s request.
+                        </p>
+                        <div class="yii"></div>
+                    </section>
+                    <section>
+                        <h2>controllers</h2>
+                        <p>
+                            each route is defined by a controller method.
+                            <div class="fragment">
+                                <pre class="inline">actionList()</pre> will be called when the url web/list is requested.
+                            </div>
+                        </p>
+                        <div class="yii"></div>
+                    </section>
+                </section>
+                <section id="views">
+                    <section>
+                        <h2>views</h2>
+                        <p>
+                            <img src="img/06-view.jpg" />
+                        </p>
+                        <div class="yii"></div>
+                    </section>
+                    <section>
+                        <h2>views</h2>
+                        <p>
+                            once the controller decides where the request is being routed, it will render the appropriate view.
+                        </p>
+                        <div class="yii"></div>
+                    </section>
+                    <section>
+                        <h2>views</h2>
+                        <p>
+                            Yii comes with a variety of helper classes like
+                            <pre class="inline">GridView</pre>
+                            to help display model data quickly and cleanly.
+                        </p>
+                        <div class="yii"></div>
+                    </section>
+                </section>
+                <section>
+                    <h2>code tutorial</h2>
+                    <pre class="block fragment wrap">http://vybeauregard.github.io/ Yii2-Cupcakes</pre>
+                    <div class="yii"></div>
+                </section>
 
-  </body>
+                <section>
+                    <img src="img/00-yii.png" />
+                    <h2>&amp;</h2>
+                    <img src="img/07-angularjs.png" />
+                </section>
+                <section>
+                    <section>
+                        <h2>two great tastes that taste great together</h2>
+                        <img src="img/08-reeses.jpg" />
+                        <div class="yii-angular"></div>
+                    </section>
+                    <section>
+                        <ul>
+                            <li>Yii as REST service</li>
+                            <li class="fragment">XHR in Angular</li>
+                            <li class="fragment">Let Angular handle form submission and updating the UI</li>
+                        </ul>
+                        <div class="yii-angular"></div>
+                    </section>
+                </section>
+                <section>
+                    <section>
+                        <h2>&ldquo;So what do I need to know about Angular?&rdquo;</h2>
+                        <div class="yii-angular"></div>
+                    </section>
+                    <section>
+                        <h2>Angular basics</h2>
+                        <ul>
+                            <li class="fragment">ng-app</li>
+                            <li class="fragment">dependency injection</li>
+                            <li class="fragment">controllers</li>
+                            <li class="fragment">directives</li>
+                            <li class="fragment">services</li>
+                            <li class="fragment">configuring with Yii</li>
+                        </ul>
+                        <div class="yii-angular"></div>
+                    </section>
+                </section>
+                <section>
+                    <h2>ng-app</h2>
+                    <p>Calling <pre class="inline">ng-app</pre> tells Angular to wake up and pay attention.</p>
+                    <p>Your controller will pick up from here.</p>
+                    <div class="yii-angular"></div>
+                </section>
+                <section>
+                    <h2>dependency injection</h2>
+                    <p>Angular&rsquo;s architecture allows you to plug in modules.</p>
+                    <p>Just include the .js file and tell the app to use that module at load time.</p>
+                    <div class="yii-angular"></div>
+                </section>
+                <section>
+                    <h2>controllers</h2>
+                    <p>The brains of your app are in the controller, just like Yii.</p>
+                    <p>At load time, it will make requests and wait for responses based on its configuration.</p>
+                    <div class="yii-angular"></div>
+                </section>
+                <section>
+                    <section>
+                        <h2>directives</h2>
+                        <p>There are many different types of directives that can be customized, many of which are built in:</p>
+                        <ul>
+                            <li>Class</li>
+                            <li>Attribute</li>
+                            <li>Element</li>
+                        </ul>
+                        <p>This allows you to extend HTML with attributes classes that instruct Angular to do something.</p>
+                        <div class="yii-angular"></div>
+                    </section>
+                    <section>
+                        <h2>directives</h2>
+                        <p>Some built-in directives:</p>
+                        <ul>
+                            <li><pre class="inline">ng-app</pre> (element)</li>
+                            <li><pre class="inline">ng-repeat</pre> (attribute)</li>
+                            <li><pre class="inline">ng-model</pre> (attribute)</li>
+                        </ul>
+                        <div class="yii-angular"></div>
+                    </section>
+                </section>
+                <section>
+                    <h2>services</h2>
+                    <p>handy for making XHR requests using promises so whenever data is returned, it&rsquo;s added to your app scope automatically.</p>
+                    <div class="yii-angular"></div>
+                </section>
+                <section>
+                    <h2>configuring with Yii</h2>
+                    <ol>
+                        <li>Add <pre class="inline">bower-asset/angular</pre> to composer.json</li>
+                        <li>Run <pre class="inline">$ composer update</pre></li>
+                        <li>Add angular.min.js to <pre class="inline">assets/BowerAsset.php</pre></li>
+                        <li>Add angular.min.js and your .js files to <pre class="inline">asset/AppAsset.php</pre></li>
+                    </ol>
+                    <div class="yii-angular"></div>
+                </section>
+                <section>
+                    <h2>code tutorial</h2>
+                    <pre class="block fragment wrap">http://vybeauregard.github.io/ Yii2-angular</pre>
+                    <div class="yii"></div>
+                </section>
+
+
+
+
+
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+
+			// Full list of configuration options available at:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				transition: 'concave', // none/fade/slide/convex/concave/zoom
+
+				// Optional reveal.js plugins
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true },
+					{ src: 'plugin/notes/notes.js', async: true }
+				]
+			});
+
+		</script>
+
+	</body>
 </html>
