@@ -58,6 +58,23 @@
                 background-position-y: bottom !important;
                 min-height: 90px;
             }
+            .reveal .progress span {
+                background-color: #969696 !important;
+            }
+            /*********************************************
+             * NAVIGATION CONTROLS
+             *********************************************/
+            .reveal .controls div.navigate-left, .reveal .controls div.navigate-left.enabled {
+              border-right-color: #777777; }
+
+            .reveal .controls div.navigate-right, .reveal .controls div.navigate-right.enabled {
+              border-left-color: #777777; }
+
+            .reveal .controls div.navigate-up, .reveal .controls div.navigate-up.enabled {
+              border-bottom-color: #777777; }
+
+            .reveal .controls div.navigate-down, .reveal .controls div.navigate-down.enabled {
+              border-top-color: #777777; }
         </style>
 
 		<!-- Code syntax highlighting -->
@@ -327,6 +344,16 @@
                     </section>
                 </section>
                 <section>
+                    <h2>Yii as REST service</h2>
+                    <p>&nbsp;</p>
+                    <p>&nbsp;</p>
+                    <p>We&rsquo;ll still be using Yii to provide Angular with data object modeling.</p>
+                    <p class="fragment">But instead of Yii returning full HTML pages, it will return JSON.</p>
+                    <p>&nbsp;</p>
+                    <p>&nbsp;</p>
+                    <div class="yii-angular"></div>
+                </section>
+                <section>
                     <section>
                         <h2>&ldquo;So what do I need to know about Angular?&rdquo;</h2>
                         <p>&nbsp;</p>
@@ -364,26 +391,48 @@
                     <div class="yii-angular"></div>
                 </section>
                 <section>
-                    <h2>dependency injection</h2>
-                    <p>&nbsp;</p>
-                    <p>&nbsp;</p>
-                    <p>Angular&rsquo;s architecture allows you to plug in modules.</p>
-                    <p>Just include the .js file and tell the app to use that module at load time.</p>
-                    <p>&nbsp;</p>
-                    <p>&nbsp;</p>
-                    <div class="yii-angular"></div>
+                    <section>
+                        <h2>dependency injection</h2>
+                        <p>&nbsp;</p>
+                        <img src="img/09-dependency-injection.gif" />
+                        <p>&nbsp;</p>
+                        <p>&nbsp;</p>
+                        <div class="yii-angular"></div>
+                    </section>
+                    <section>
+                        <h2>dependency injection</h2>
+                        <p>&nbsp;</p>
+                        <p>&nbsp;</p>
+                        <p>Angular&rsquo;s architecture allows you to plug in modules.</p>
+                        <p>Just include the .js file and tell the app to use that module at load time.</p>
+                        <p>&nbsp;</p>
+                        <p>&nbsp;</p>
+                        <div class="yii-angular"></div>
+                    </section>
                 </section>
                 <section>
-                    <h2>controllers</h2>
-                    <p>&nbsp;</p>
-                    <p>&nbsp;</p>
-                    <p>The brains of your app are in the controller, just like Yii.</p>
-                    <p>At load time, it will make requests and wait for responses based on its configuration.</p>
-                    <p>&nbsp;</p>
-                    <p>&nbsp;</p>
-                    <div class="yii-angular"></div>
+                    <section>
+                        <h2>controllers</h2>
+                        <img src="img/10-controller.png" />
+                        <div class="yii-angular"></div>
+                    </section>
+                    <section>
+                        <h2>controllers</h2>
+                        <p>&nbsp;</p>
+                        <p>&nbsp;</p>
+                        <p>The brains of your app are in the controller, just like Yii.</p>
+                        <p>At load time, it will make requests and wait for responses based on its configuration.</p>
+                        <p>&nbsp;</p>
+                        <p>&nbsp;</p>
+                        <div class="yii-angular"></div>
+                    </section>
                 </section>
                 <section>
+                    <section>
+                        <h2>directives</h2>
+                        <img src="img/11-directives.jpg" />
+                        <div class="yii-angular"></div>
+                    </section>
                     <section>
                         <h2>directives</h2>
                         <p>There are many different types of directives that can be customized, many of which are built in:</p>
@@ -410,14 +459,24 @@
                     </section>
                 </section>
                 <section>
-                    <h2>services</h2>
-                    <p>&nbsp;</p>
-                    <p>&nbsp;</p>
-                    <p>handy for making XHR requests using promises so whenever data is returned, it&rsquo;s added to your app scope automatically.</p>
-                    <p>&nbsp;</p>
-                    <p>&nbsp;</p>
-                    <p>&nbsp;</p>
-                    <div class="yii-angular"></div>
+                    <section>
+                        <h2>services</h2>
+                        <p>&nbsp;</p>
+                        <img src="img/12-services.gif" />
+                        <p>&nbsp;</p>
+                        <p>&nbsp;</p>
+                        <div class="yii-angular"></div>
+                    </section>
+                    <section>
+                        <h2>services</h2>
+                        <p>&nbsp;</p>
+                        <p>Service hands request off to resource on behalf of your controller.</p>
+                        <p class="fragment">Resource sends XHR request to Yii using a promise.</p>
+                        <p class="fragment">Once the resource gets a response, that data is added to your app scope automatically.</p>
+                        <p>&nbsp;</p>
+                        <p>&nbsp;</p>
+                        <div class="yii-angular"></div>
+                    </section>
                 </section>
                 <section>
                     <h2>configuring with Yii</h2>
