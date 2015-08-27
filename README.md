@@ -1,6 +1,6 @@
 # Yii2-angular
 ####"But wait," you say, "Yii is too magical!"
-[view slide deck](http://htmlpreview.github.io/?https://raw.githubusercontent.com/vybeauregard/Yii2-angular/master/index.html#22)
+[view slide deck](http://vybeauregard.github.io/Yii2-angular/present.html#/8)
 
 You're right. Sort of. The magic is in everything Yii does under the covers. And while all of the forms and pages that Gii generates are handy, sometimes they won't _quite_ fit your needs. Especially when you're mixing and mashing up different models in different ways.
 
